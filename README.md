@@ -1,21 +1,16 @@
-# HttpClient
+# README
 
-**TODO: Add description**
+## Coding Exercise - Http client written in Elixir
 
-## Installation
+Build an HTTP client to retrieve data from https://dev-mw-test-service-staging-shakespeare.meltwater.io/sources/copyco
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `http_client` to your list of dependencies in `mix.exs`:
 
-```elixir
-def deps do
-  [
-    {:http_client, "~> 0.1.0"}
-  ]
-end
-```
+Provide the following extra functionality:
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/http_client](https://hexdocs.pm/http_client).
+* Write a method to exclude / filter out all publishers without any source IDs associated. For example, the following entry should be removed:
 
+  `{"url":"url3", "publisher":"Publisher3", "sourceIDs":[]}`
+
+* Write a method that finds all publishers associated with a given source ID
+
+* Verify your solution by introducing some tests
