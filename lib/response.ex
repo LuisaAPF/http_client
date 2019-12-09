@@ -29,23 +29,31 @@ defmodule HttpClient.Response do
 
 
   @doc """
-  Receives a publishers map (in the same form as the return of decode_response_body)
-  and returns a list with all publishers that have a non-empty sourceIDs.
+  Receives a publishers map (in the same format returned by decode_response_body)
+  and returns another publishers map, excluding all publishers that have a non-empty
+  sourceIDs.
   """
-  def get_publishers_with_non_empty_sourceIDs(%{"copyCo" => publishers}) do
-    Enum.filter(publishers, fn publisher ->
-      publisher["sourceIDs"] != []
+  def get_publishers_with_non_empty_sourceIDs(response) do
+    Enum.reduce(response, %{}, fn {media, publishers}, acc  ->
+      publishers = Enum.filter(publishers, fn pub ->
+        pub["sourceIDs"] != []
+      end)
+      Map.merge(acc, %{media => publishers})
     end)
   end
 
 
   @doc """
-  Receives a publishers map (in the same form as the return of decode_response_body)
-  and returns a list with all publishers associated to a given sourceID.
+  Receives a publishers map (in the same format returned by decode_response_body)
+  and returns another publishers map, containing only the publishers associated
+  to a given sourceID.
   """
-  def get_publishers_by_source_ID(%{"copyCo" => publishers}, sourceID) do
-    Enum.filter(publishers, fn publisher ->
-      Enum.any?(publisher["sourceIDs"], & &1 == sourceID)
+  def get_publishers_by_source_ID(response, sourceID) do
+    Enum.reduce(response, %{}, fn {media, publishers}, acc  ->
+      publishers = Enum.filter(publishers, fn publisher ->
+        Enum.any?(publisher["sourceIDs"], & &1 == sourceID)
+      end)
+      Map.merge(acc, %{media => publishers})
     end)
   end
 end

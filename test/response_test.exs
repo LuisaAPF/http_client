@@ -30,7 +30,7 @@ defmodule HttpClient.ResponseTest do
   end
 
   describe "get_publishers_with_non_empty_sourceIDs/1" do
-    test "returns a list with all publishers that have a non-empty sourceIDs" do
+    test "returns a map with all publishers that have non-empty sourceIDs" do
       json_response =
         %{"copyCo" =>
           [
@@ -43,21 +43,37 @@ defmodule HttpClient.ResponseTest do
               "url" => "adzuna.com.au",
               "publisher" => "Fairfax Media",
               "sourceIDs" => []}
+          ],
+          "fairFax" => [
+            %{
+              "publisher" => "News Limited",
+              "sourceIDs" => [269062, 42061],
+              "url" => "adelaidenow.com.au"
+            },
+            %{
+              "url" => "adzuna.com.au",
+              "publisher" => "Fairfax Media",
+              "sourceIDs" => []}
           ]
         }
 
-      assert [
-        %{
+      assert %{
+        "copyCo" => [%{
           "publisher" => "News Limited",
           "sourceIDs" => [269062, 42061],
           "url" => "adelaidenow.com.au"
-        }
-      ] == Response.get_publishers_with_non_empty_sourceIDs(json_response)
+        }],
+        "fairFax" => [%{
+          "publisher" => "News Limited",
+          "sourceIDs" => [269062, 42061],
+          "url" => "adelaidenow.com.au"
+        }]
+      } == Response.get_publishers_with_non_empty_sourceIDs(json_response)
     end
   end
 
   describe "get_publishers_by_source_ID" do
-    test "returns a list with all publishers associated to a given sourceID" do
+    test "returns a map with all publishers associated to a given sourceID" do
       json_response =
         %{"copyCo" =>
           [
@@ -76,21 +92,42 @@ defmodule HttpClient.ResponseTest do
               "publisher" => "Fairfax Media",
               "sourceIDs" => [2, 3, 4]
             }
+          ],
+          "fairFax" => [
+            %{
+              "url" => "adelaidenow.com.au",
+              "publisher" => "News Limited",
+              "sourceIDs" => [6]
+            },
+            %{
+              "url" => "adzuna.com.au",
+              "publisher" => "Fairfax Media",
+              "sourceIDs" => [3, 5, 9]
+            },
           ]
         }
 
-        assert [
-          %{
-            "url" => "adelaidenow.com.au",
-            "publisher" => "News Limited",
-            "sourceIDs" => [3, 8]
-          },
-          %{
-            "url" => "afr.com",
-            "publisher" => "Fairfax Media",
-            "sourceIDs" => [2, 3, 4]
-          }
-        ] |> Enum.sort_by(& &1["url"]) == Response.get_publishers_by_source_ID(json_response, 3) |> Enum.sort_by(& &1["url"])
+        assert %{
+          "copyCo" => [
+            %{
+              "url" => "adelaidenow.com.au",
+              "publisher" => "News Limited",
+              "sourceIDs" => [3, 8]
+            },
+            %{
+              "url" => "afr.com",
+              "publisher" => "Fairfax Media",
+              "sourceIDs" => [2, 3, 4]
+            }
+          ],
+          "fairFax" => [
+            %{
+              "url" => "adzuna.com.au",
+              "publisher" => "Fairfax Media",
+              "sourceIDs" => [3, 5, 9]
+            }
+          ]
+        } == Response.get_publishers_by_source_ID(json_response, 3)
     end
   end
 end
